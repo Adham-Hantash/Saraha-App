@@ -1,8 +1,9 @@
 import userModel from "../../../../DB/models/user.model.js";
 import { compare, hash } from "../../../services/HashAndCompare.js";
+import { generateToken } from "../../../services/generateAndVerfyToken.js";
+
 
 export const signup = async (req,res)=>{
-    try{
         const {userName,email,password} = req.body;
         console.log(userName,email,password);
     
@@ -13,13 +14,10 @@ export const signup = async (req,res)=>{
         const hashPassword = hash(password);
         const createUser = await userModel.create({userName,email,password:hashPassword})
         return res.json({message:"user created successfully",user:createUser._id });
-    }catch(err){
-        return res.json({message:"signup catch error",error:err.stack});
-    }
+
 }
 
 export const login = async (req,res)=>{
-    try{
         const {email,password} = req.body;
         const user = await userModel.findOne({email});
         if(!user){
@@ -30,13 +28,8 @@ export const login = async (req,res)=>{
         if(!match){
             return res.json({message:"Invalid Password"})
         }else{
-            return res.json({message:"Signed in"})
-    
+            const token = generateToken({id:user._id})
+            return res.json({message:"Signed in",token})
         }
     }
-    }catch(err){
-        return res.json({message:"Login catch error",error:err.stack})
-
-    }
-
 }
