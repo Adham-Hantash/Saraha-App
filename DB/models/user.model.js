@@ -17,6 +17,9 @@ const userSchema = new Schema({
     confirmPassword:{
         type: 'boolean',
         default: false
+    },
+    profilePicture:{
+        type: 'string'
     }
 },
 {
